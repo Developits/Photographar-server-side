@@ -24,6 +24,8 @@ async function run() {
       .db("rezaPhotography")
       .collection("services");
 
+    const reviewCollection = client.db("rezaPhotography").collection("reviews");
+
     app.get("/services", async (req, res) => {
       const query = {};
       const cursor = serviceCollection.find(query);
@@ -48,6 +50,37 @@ async function run() {
     app.post("/services", async (req, res) => {
       const service = req.body;
       const result = await serviceCollection.insertOne(service);
+      res.send(result);
+    });
+
+    // review section
+
+    app.get("/servicereviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { serviceId: id };
+      const cursor = reviewCollection.find(query);
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
+    app.get("/userreviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { customerId: id };
+      const cursor = reviewCollection.find(query);
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
+    app.post("/reviews", async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
+      res.send(result);
+    });
+
+    app.delete("/reviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await reviewCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
