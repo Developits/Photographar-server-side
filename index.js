@@ -77,21 +77,17 @@ async function run() {
       res.send(result);
     });
 
-    app.put("/reviews/:id", async (req, res) => {
+    app.patch("/reviews/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const review = req.body;
-      const option = { upsert: true };
       const updateUser = {
         $set: {
-          
+          description: review.description,
+          rating: review.rating,
         },
       };
-      const result = await userCollections.updateOne(
-        filter,
-        updateUser,
-        option
-      );
+      const result = await reviewCollection.updateOne(filter, updateUser);
       res.send(result);
     });
 
